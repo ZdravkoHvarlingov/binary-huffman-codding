@@ -28,11 +28,12 @@ private:
 
 	void BuildFrequencyTable(const char*);
 	void BuildTree(const char*);
-	void BuildCodesTable(TreeNode*, std::string, std::map<char, std::string>&);
+	void BuildCodesTable(TreeNode*, std::map<char, std::string>&);
 	void DeleteTree(TreeNode *);
 	void SerializeTree(TreeNode *, std::ofstream&);
 	TreeNode* DeserializeTree(std::ifstream&);
 
 	TreeNode *root;
 	unsigned long long asciiTable[TABLE_SIZE];
+	std::string code;
 };

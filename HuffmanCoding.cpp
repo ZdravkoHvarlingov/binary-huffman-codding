@@ -23,7 +23,8 @@ void HuffmanCoding::Encode(const char *inputFileName, const char *outputFileName
 {
 	BuildTree(inputFileName);
 	std::map<char, std::string> codesTable;
-	BuildCodesTable(root, "", codesTable);
+	code = "";
+	BuildCodesTable(root, codesTable);
 	
 	unsigned long long numberOfBits = 0;
 	for (int i = 0; i < TABLE_SIZE; ++i)
@@ -188,7 +189,7 @@ void HuffmanCoding::BuildTree(const char *inputFileName)
 	root = que.top();
 }
 
-void HuffmanCoding::BuildCodesTable(TreeNode* root, std::string code, std::map<char, std::string> &table)
+void HuffmanCoding::BuildCodesTable(TreeNode* root, std::map<char, std::string> &table)
 {
 	if (root->left == nullptr && root->right == nullptr)
 	{
@@ -196,8 +197,11 @@ void HuffmanCoding::BuildCodesTable(TreeNode* root, std::string code, std::map<c
 		return;
 	}
 
-	BuildCodesTable(root->left, code + "0", table);
-	BuildCodesTable(root->right, code + "1", table);
+	code.push_back('0');
+	BuildCodesTable(root->left, table);
+	code[code.length() - 1] = '1';
+	BuildCodesTable(root->right, table);
+	code.pop_back();
 }
 
 void HuffmanCoding::DeleteTree(TreeNode *node)
@@ -220,7 +224,7 @@ void HuffmanCoding::SerializeTree(TreeNode *node, std::ofstream &out)
 		return;
 	}
 
-	out << "(" << node->weight << " " << (int)node->symbol << " ";
+	out << "(" << (int)node->symbol << " ";
 	SerializeTree(node->left, out);
 	out << " ";
 	SerializeTree(node->right, out);
@@ -236,8 +240,6 @@ HuffmanCoding::TreeNode* HuffmanCoding::DeserializeTree(std::ifstream &in)
 		return nullptr;
 	}
 
-	unsigned long long weight;
-	in >> weight;
 	int symbolAscii;
 	in >> symbolAscii;
 	//get the space;
@@ -247,5 +249,5 @@ HuffmanCoding::TreeNode* HuffmanCoding::DeserializeTree(std::ifstream &in)
 	in.get();
 	HuffmanCoding::TreeNode *right = DeserializeTree(in);
 	in.get();
-	return new HuffmanCoding::TreeNode(weight, (char)symbolAscii, left, right);
+	return new HuffmanCoding::TreeNode(0, (char)symbolAscii, left, right);
 }
